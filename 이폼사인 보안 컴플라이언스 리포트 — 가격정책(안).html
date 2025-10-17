@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>이폼사인 보안 컴플라이언스 리포트 — 가격정책 (개선안)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel-2: #ffffff;
+      --text: #0c1117;
+      --muted: #4b5563;
+      --accent: #2563eb;
+      --accent-2: #60a5fa;
+      --positive: #16a34a;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --border: #e5e7eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg);
+      color: var(--text); font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans KR, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 24px; }
+    header {
+      position: sticky; top: 0; z-index: 3; backdrop-filter: blur(8px);
+      background: rgba(255,255,255,.85); border-bottom: 1px solid var(--border);
+    }
+    header .inner { max-width: 1120px; margin: 0 auto; padding: 14px 24px; display:flex; gap:16px; align-items: center; }
+    .brand { font-weight: 800; letter-spacing: .2px; }
+    .badge { border:1px solid var(--border); padding:4px 8px; border-radius:999px; color: var(--muted); font-size: 12px; }
+    .updated { color: var(--muted); font-size: 12px; margin-left:auto }
+
+    h1 { font-size: 26px; margin: 18px 0 8px; }
+    h2 { font-size: 22px; margin: 28px 0 12px; }
+    h3 { font-size: 18px; margin: 22px 0 8px; color: var(--accent-2); }
+    p { margin: 6px 0 10px; }
+
+    .grid { display: grid; gap: 16px; grid-template-columns: 280px 1fr; }
+    @media (max-width: 960px) { .grid { grid-template-columns: 1fr; } nav { position: static; } }
+    nav { position: sticky; top: 64px; align-self: start; }
+
+    .card { background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+    .toc a { display:block; padding:10px 12px; color:var(--muted); text-decoration:none; border-radius:10px; }
+    .toc a:hover, .toc a.active { color:var(--text); background:#eef2ff; }
+
+    .kpi { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
+    .kpi .item { padding:14px; border-radius:14px; background:#ffffff; border:1px solid var(--border); }
+    .kpi .item b { display:block; font-size:22px; }
+    @media (max-width: 720px) { .kpi { grid-template-columns: 1fr 1fr; } }
+
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 12px; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    thead th { background: #f8fafc; font-weight: 700; font-size: 13px; text-align: left; letter-spacing: .3px; }
+    tbody tr:hover { background: rgba(106,169,255,.05); }
+    .hint { color: var(--muted); font-size: 13px; }
+
+    .pill { display:inline-flex; align-items:center; gap:6px; padding:2px 8px; font-size:12px; border-radius:999px; border:1px solid var(--border); color:var(--muted); }
+    .ok { color: var(--positive); }
+
+    .switch { display:flex; gap:8px; background:#f8fafc; border:1px solid var(--border); border-radius:12px; padding:6px; width:max-content; align-items:center; }
+    .switch button { background:transparent; color:var(--muted); border:0; padding:8px 12px; border-radius:10px; cursor:pointer; }
+    .switch button.active { color:var(--text); background:#ffffff; outline:1px solid var(--border); }
+
+    .flow { display:flex; flex-wrap:wrap; gap:12px; align-items:stretch; }
+    .step { flex:1 1 180px; background:#ffffff; border:1px solid var(--border); border-radius:14px; padding:12px; position:relative; }
+    .step h4 { margin:0 0 6px; font-size:14px; color:var(--text); letter-spacing:.2px; }
+    .step::after { content:""; position:absolute; right:-6px; top:calc(50% - 6px); width:12px; height:12px; border-top:2px solid var(--border); border-right:2px solid var(--border); transform:rotate(45deg); opacity:.7; }
+    .step:last-child::after { display:none; }
+
+    .code { background:#f6f8fa; border:1px solid var(--border); border-radius:12px; padding:12px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 13px; overflow:auto; }
+
+    /* Simple bar chart */
+    .bars { display:grid; gap:10px; }
+    .bar { display:grid; grid-template-columns: 120px 1fr 60px; align-items:center; gap:10px; }
+    .bar .label { color:var(--muted); font-size:13px; }
+    .bar .track { background:#e5e7eb; border:1px solid var(--border); height:10px; border-radius:999px; overflow:hidden; }
+    .bar .fill { height:100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); width:0; }
+    .bar .val { text-align:right; color:var(--text); font-variant-numeric:tabular-nums; font-size:13px; }
+
+    .foot { color: var(--muted); font-size: 12px; margin-top: 32px; text-align:center; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .btn { background:#ffffff; border:1px solid var(--border); color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .btn:hover { background:#f3f4f6; }
+
+    .pricing-toolbar{display:grid; grid-template-columns:1fr; align-items:start; row-gap:8px; margin:6px 0 12px;}
+    .pricing-toolbar .right{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-start; align-items:center;}
+    .switch{flex-wrap:nowrap; white-space:nowrap;}
+    .switch button{min-width:56px; height:36px; line-height:34px;}
+    @media (max-width: 960px){
+      .pricing-toolbar{grid-template-columns:1fr;}
+    }
+
+    /* ===== print helpers ===== */
+    .interactive-only { display: initial; }
+    .print-only { display: none; }
+
+    header .print-control { position:absolute; right:16px; top:10px; }
+    .btn.print { background:#111827; color:#ffffff; border:1px solid #111827; }
+    .btn.print:hover { filter:brightness(1.05); }
+
+    @media print {
+      :root { --bg:#ffffff; --panel:#ffffff; --panel-2:#ffffff; --text:#000000; --border:#cccccc; }
+      body { background:#ffffff; color:#000000; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      header, .toc, .interactive-only { display:none !important; }
+      .print-only { display:block !important; }
+      .card { box-shadow:none; border:1px solid #cccccc; page-break-inside: avoid; }
+      section, table { page-break-inside: avoid; }
+      .code { background:#ffffff; border-color:#cccccc; }
+    }
+    @page { size:A4; margin: 12mm; }
+
+    .matrix thead th { text-align:center; }
+    .matrix td, .matrix th { font-variant-numeric: tabular-nums; }
+  </style>
+
+  <!-- 개선: 유지보수를 위해 인쇄용 CSS를 JS에서 분리 -->
+  <style id="print-styles">
+    *{box-sizing:border-box}
+    body{margin:0; background:#fff; color:#000; font:14px/1.6 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans KR, Helvetica, Arial}
+    h1{font-size:22px;margin:12px 0 6px} h2{font-size:18px;margin:12px 0 6px} h3{font-size:15px;margin:10px 0 6px}
+    p,ul,li { margin: 6px 0; }
+    .card{border:1px solid #ccc; border-radius:6px; padding:12px; margin:10px 0; page-break-inside: avoid;}
+    table{width:100%; border-collapse:collapse; page-break-inside: avoid;}
+    th,td{border:1px solid #ccc; padding:8px; vertical-align:top; text-align:left;}
+    thead th{background:#f0f2f5;}
+    .matrix thead th { text-align: center; }
+    .matrix td, .matrix th { text-align: right; }
+    .matrix td:first-child, .matrix th:first-child { text-align: left; }
+    .hint{color:#555; font-size:12px}
+    .interactive-only{display:none !important}
+    .print-only{display:block !important}
+    @page{size:A4; margin:12mm}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <div class="brand">이폼사인 · 보안 컴플라이언스 리포트 가격정책</div>
+      <span class="badge">초안 · 내부 공유</span>
+      <div class="updated">최종 업데이트: 2025-10-17 (KST)</div>
+    </div>
+    <div class="print-control"><button type="button" class="btn print" onclick="exportPDF()" title="PDF로 저장/인쇄">PDF로 저장/인쇄</button></div>
+  </header>
+
+  <div class="wrap">
+    <div class="grid">
+      <nav class="card">
+        <h3>목차</h3>
+        <div class="toc">
+          <a href="#summary" class="active">요약</a>
+          <a href="#premise">전제/가정</a>
+          <a href="#services">서비스 구분/범위</a>
+          <a href="#pricing">가격 표</a>
+          <a href="#options">옵션·가산</a>
+          <a href="#process">프로세스·SLA</a>
+          <a href="#governance">운영 원칙</a>
+          <a href="#rationale">가격 산정 근거</a>
+          <a href="#examples">계산 예시</a>
+        </div>
+      </nav>
+
+      <main>
+        <section id="summary" class="card">
+          <h1>요약</h1>
+          <p><b>현황</b>: 현재 요금제표에는 “프리미엄 서비스(보안 컴플라이언스 리포트)”만 표기되어 있어 <b>정식 가격정책이 없습니다</b>.<br> <b>본 문서는 정가 가격정책 수립</b>을 목표로 합니다. 패키지 <b>정가 상한은 1,000만 원</b>, 옵션·가산은 별도입니다.</p>
+          <div class="kpi" aria-label="핵심 지표">
+            <div class="item"><span class="hint">정가 상한</span><b>1,000만 원</b></div>
+            <div class="item"><span class="hint">표준 공수(최초/반복)</span><b>5 m/d · 3 m/d</b></div>
+            <div class="item"><span class="hint">단가 전제</span><b>1 M/M = 1,000만</b><div class="hint">(≈ 40만/일, 25영업일)</div></div>
+            <div class="item"><span class="hint">연도 기준</span><b>2024년 내부 공수 기준</b><div class="hint">(2025년 실제 지원 이력으로 데이터 검증)</div></div>
+          </div>
+        </section>
+
+        <section id="pricing" class="card">
+          <h2>가격 표(안)</h2>
+          <div class="pricing-toolbar interactive-only">
+            <div class="hint">단위: 만 원(부가세 별도). 패키지 <b>정가 상한 1,000</b>.</div>
+            <div class="right">
+              <div class="switch" role="group" aria-label="표기 모드">
+                <button type="button" id="btn-civil" class="active">일반</button>
+                <button type="button" id="btn-public">공공</button>
+              </div>
+              <div class="switch" role="group" aria-label="정가 선택안">
+                <button type="button" id="btn-plan-a" class="active">A안</button>
+                <button type="button" id="btn-plan-b">B안</button>
+                <button type="button" id="btn-plan-c">C안</button>
+              </div>
+            </div>
+          </div>
+
+          <h3 style="margin-top:12px" class="interactive-only">정가(선택안 A/B/C)</h3>
+          <table id="tbl-list" role="table" aria-label="정가" class="interactive-only">
+            <thead><tr><th scope="col">구분</th><th scope="col">주기</th><th scope="col">공수</th><th scope="col">정가</th></tr></thead>
+            <tbody>
+              <tr data-row="std-y1"><td>스탠다드</td><td>연 1회</td><td>5 m/d</td><td class="price">590</td></tr>
+              <tr data-row="std-h2"><td>스탠다드</td><td>반기 2회</td><td>8 m/d</td><td class="price">750</td></tr>
+              <tr data-row="std-q4"><td>스탠다드</td><td>분기 4회</td><td>14 m/d</td><td class="price">800</td></tr>
+              <tr data-row="ent-y1"><td>엔터프라이즈</td><td>연 1회</td><td>5 m/d</td><td class="price">700</td></tr>
+              <tr data-row="ent-h2"><td>엔터프라이즈</td><td>반기 2회</td><td>8 m/d</td><td class="price">900</td></tr>
+              <tr data-row="ent-q4"><td>엔터프라이즈</td><td>분기 4회</td><td>14 m/d</td><td class="price">990</td></tr>
+            </tbody>
+          </table>
+
+          <!-- 인쇄용 전체 가격표 (민간/공공 × A/B/C 동시 노출) -->
+          <div id="pricing-print" class="print-only">
+            <table class="matrix" role="table" aria-label="정가 일람">
+              <thead>
+                <tr>
+                  <th scope="col" rowspan="2">구분</th>
+                  <th scope="col" rowspan="2">주기</th>
+                  <th scope="col" rowspan="2">공수</th>
+                  <th scope="colgroup" colspan="3">일반(민간)</th>
+                  <th scope="colgroup" colspan="3">공공</th>
+                </tr>
+                <tr>
+                  <th scope="col">A안</th><th scope="col">B안</th><th scope="col">C안</th>
+                  <th scope="col">A안</th><th scope="col">B안</th><th scope="col">C안</th>
+                </tr>
+              </thead>
+              <tbody id="matrix-body"><!-- JS 렌더링 --></tbody>
+            </table>
+            <p class="hint">※ 단위: 만 원(부가세 별도). 패키지 정가 상한 1,000, 옵션·가산 별도입니다.</p>
+          </div>
+        </section>
+
+        <section id="premise" class="card">
+          <h2>전제/가정</h2>
+          <ul>
+            <li><b>공수 기준(2024년 내부 공수 기준)</b>: 최초 회차 <b>5 m/d</b>, 반복 회차 <b>3 m/d</b>를 표준으로 적용합니다.<br> 연 1회=5 m/d, 반기 2회=8 m/d, 분기 4회=14 m/d.</li>
+            <li><b>내부 대응 데이터(2024–2025년)</b>: 2024년 22건(맞춤형 평균 5 m/d),<br> 2025년 9월 기준 15건(표준형 2.5 m/d, 맞춤형 5/3 m/d 유지).</li>
+            <li><b>단가 전제</b>: 1 M/M = 1,000만 원 → 25영업일 가정 시 <b>일 원가 ≈ 40만 원</b>.</li>
+          </ul>
+        </section>
+
+        <section id="services" class="card">
+          <h2>서비스 구분/범위</h2>
+          <table role="table" aria-label="서비스 구분">
+            <thead><tr><th scope="col">구분</th><th scope="col">대상</th><th scope="col">포함 범위(산출물)</th><th scope="col">제외·옵션(별도 과금)</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>베이직(무료)</b></td>
+                <td>모든 고객(Trial 제외)</td>
+                <td>표준 체크리스트 점검, 결과 요약 1쪽, 법적 최소 준수 현황</td>
+                <td>고객 맞춤 항목, 상세 증적 패키지, 감사 대응 문서</td>
+              </tr>
+              <tr>
+                <td><b>프리미엄–스탠다드(유료)</b></td>
+                <td>중소·일반</td>
+                <td>맞춤 체크리스트, <b>핵심 증적 패키지</b>(교육 이수, 입·퇴사자, 대표 로그 캡처 등), 요약 1쪽 + 상세 보고서, 레드마인 납품, 원격 Q&A 1회</td>
+                <td>침해사고 분석, 모의해킹/자동 스캔, 코드/설계 리뷰, 온사이트</td>
+              </tr>
+              <tr>
+                <td><b>프리미엄–엔터프라이즈(유료)</b></td>
+                <td>공공·대규모/복잡</td>
+                <td>스탠다드 전 범위 + <b>감사 대응 보조</b>(서면 Q&A 강화), 내부 정책 맵핑, 다부서·멀티 시스템 리포팅</td>
+                <td>온사이트 상주, 야간/주말, 다국어, 다법인 통합</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="options" class="card">
+          <h2>옵션·가산 정책(패키지 정가와 별도)</h2>
+          <table role="table" aria-label="옵션 가산">
+            <thead><tr><th scope="col">항목</th><th scope="col">정책</th></tr></thead>
+            <tbody>
+              <tr><td>복잡도(요구 항목 수)</td><td>1–50 기본, 51–200 <b>+10%</b>, 201–400 <b>+20%</b></td></tr>
+              <tr><td>급행 납품(TAT 단축)</td><td>5영업일 → 3영업일 <b>+30%</b></td></tr>
+              <tr><td>야간/주말 수행</td><td><b>+50%</b></td></tr>
+              <tr><td>다국어 보고서</td><td>영문 병기 <b>+100만 원/회</b></td></tr>
+              <tr><td>멀티 법인/사업장</td><td>추가 대상당 <b>+20%</b> 또는 <b>+2 m/d</b> 중 큰 값</td></tr>
+              <tr><td>범위 변경/추가 공수</td><td>스탠다드 <b>120만/일</b>, 엔터프라이즈 <b>150만/일</b></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="process" class="card">
+          <h2>프로세스·SLA(도식)</h2>
+          <div class="flow" aria-label="프로세스 흐름">
+            <div class="step"><h4>1) 요청 접수</h4><div class="hint">레드마인 티켓 등록(주기/범위/기한) → <b>1영업일 내 배정</b></div></div>
+            <div class="step"><h4>2) 설계·자료요청</h4><div class="hint">맞춤 체크리스트 설계, 자료요청서 발행 → 자료 수령 <b>1영업일 내 착수</b></div></div>
+            <div class="step"><h4>3) 수행·증적 취합</h4><div class="hint">최초 <b>5영업일</b>, 반복 <b>3영업일</b> 기준 수행</div></div>
+            <div class="step"><h4>4) 납품</h4><div class="hint">요약 1쪽 + 상세 보고서 + 증적 패키지 → 마감일 <b>18시 전 업로드</b></div></div>
+            <div class="step"><h4>5) 질의응대</h4><div class="hint">서면 Q&A(스탠다드 1회, 엔터프라이즈 강화) → <b>5영업일 내</b></div></div>
+          </div>
+        </section>
+
+        <section id="governance" class="card">
+          <h2>운영 원칙(승인·표기·계약)</h2>
+          <ul>
+            <li><b>할인 승인 체계</b>: 할인이 필요한 모든 영업 케이스는 <b>영업담당자가 클라우드사업본부장에게 보고</b> 후 <b>승인 받고 진행</b>합니다. 권고 하한·절대 하한은 내부 가이드로 운영하며, <b>절대 하한 이하 제안은 불가</b>합니다.</li>
+            <li><b>계약 유의</b>: 회차별 착수 지시 후 30일 내 완료, 착수 3영업일 전 무상 취소/연기, 이후 총액 20% 위약.</li>
+            <li><b>절대 하한 적용 필수</b>: 4회 분기 또는 2년 약정, 선결제 100%, 옵션 전부 제외, 레퍼런스 동의, Q&A/정정 제한 및 변경관리 수용.</li>
+          </ul>
+        </section>
+
+        <section id="rationale" class="card">
+          <h2>가격 산정 근거</h2>
+          <h3>법·업무 근거</h3>
+          <p>개인정보 처리 <b>위탁사의 감독 의무</b> 및 <b>수탁사의 안전조치 의무</b> 이행을 위한 정기 점검·보고 필요성. 맞춤형 증적·감사 대응 수요 증가에 따른 전담 공수 투입.</p>
+
+          <h3>산식(원가·리스크 반영)</h3>
+          <div class="code" aria-label="가격 산정 산식"><pre>리스트 프라이스 ≈ [직접 공수 × 일 원가 ÷ 유효 가동률]
+                     + [간접비(관리·QA·법무·툴)]
+                     + [위험 프리미엄(10~20%)]
+                     + [영업 마진(15~25%)]</pre></div>
+
+          <h3>직접 공수 대비 배수(정가 기준)</h3>
+          <table role="table" aria-label="배수 테이블">
+            <thead><tr><th scope="col">구분</th><th scope="col">주기</th><th scope="col">공수</th><th scope="col">직접 공수 비용(공수×40)</th><th scope="col">정가</th><th scope="col">정가÷직접 공수</th></tr></thead>
+            <tbody>
+              <tr><td>스탠다드</td><td>연 1회</td><td>5</td><td>200</td><td>590</td><td>2.95배</td></tr>
+              <tr><td>스탠다드</td><td>반기 2회</td><td>8</td><td>320</td><td>750</td><td>2.34배</td></tr>
+              <tr><td>스탠다드</td><td>분기 4회</td><td>14</td><td>560</td><td>800</td><td>1.43배</td></tr>
+              <tr><td>엔터프라이즈</td><td>연 1회</td><td>5</td><td>200</td><td>700</td><td>3.50배</td></tr>
+              <tr><td>엔터프라이즈</td><td>반기 2회</td><td>8</td><td>320</td><td>900</td><td>2.81배</td></tr>
+              <tr><td>엔터프라이즈</td><td>분기 4회</td><td>14</td><td>560</td><td>990</td><td>1.77배</td></tr>
+            </tbody>
+          </table>
+
+          <h3 style="margin-top:14px">배수 시각화(간단 바 차트)</h3>
+          <!-- 개선: 웹 접근성 강화를 위해 figure, figcaption 사용 및 aria 속성 추가 -->
+          <figure class="bars" role="group" aria-label="직접 공수 대비 정가 배수 시각화">
+            <figcaption class="hint" style="display:none;">아래는 각 서비스 플랜별 직접 공수 비용 대비 정가의 배수를 나타내는 바 차트입니다.</figcaption>
+            <div class="bar" role="progressbar" aria-valuenow="2.95" aria-valuemin="0" aria-valuemax="5" aria-labelledby="label-std-y1">
+                <div class="label" id="label-std-y1">STD 연1</div><div class="track"><div class="fill" style="width:59%"></div></div><div class="val">2.95×</div>
+            </div>
+            <div class="bar" role="progressbar" aria-valuenow="2.34" aria-valuemin="0" aria-valuemax="5" aria-labelledby="label-std-h2">
+                <div class="label" id="label-std-h2">STD 반2</div><div class="track"><div class="fill" style="width:46.8%"></div></div><div class="val">2.34×</div>
+            </div>
+            <div class="bar" role="progressbar" aria-valuenow="1.43" aria-valuemin="0" aria-valuemax="5" aria-labelledby="label-std-q4">
+                <div class="label" id="label-std-q4">STD 분4</div><div class="track"><div class="fill" style="width:28.6%"></div></div><div class="val">1.43×</div>
+            </div>
+            <div class="bar" role="progressbar" aria-valuenow="3.50" aria-valuemin="0" aria-valuemax="5" aria-labelledby="label-ent-y1">
+                <div class="label" id="label-ent-y1">ENT 연1</div><div class="track"><div class="fill" style="width:70%"></div></div><div class="val">3.50×</div>
+            </div>
+            <div class="bar" role="progressbar" aria-valuenow="2.81" aria-valuemin="0" aria-valuemax="5" aria-labelledby="label-ent-h2">
+                <div class="label" id="label-ent-h2">ENT 반2</div><div class="track"><div class="fill" style="width:56.2%"></div></div><div class="val">2.81×</div>
+            </div>
+            <div class="bar" role="progressbar" aria-valuenow="1.77" aria-valuemin="0" aria-valuemax="5" aria-labelledby="label-ent-q4">
+                <div class="label" id="label-ent-q4">ENT 분4</div><div class="track"><div class="fill" style="width:35.4%"></div></div><div class="val">1.77×</div>
+            </div>
+          </figure>
+        </section>
+
+        <section id="examples" class="card">
+          <h2>계산 예시(샘플)</h2>
+          <p><b>조건</b>: 엔터프라이즈 · 반기 2회(8 m/d) · 공공기관 · 요구 항목 250개 · 급행/야간 없음</p>
+          <table role="table" aria-label="계산 예시">
+            <thead><tr><th scope="col">구성</th><th scope="col">금액(만원)</th><th scope="col">설명</th></tr></thead>
+            <tbody>
+              <tr><td>기본 정가</td><td>900</td><td>엔터프라이즈 반기(2회)</td></tr>
+              <tr><td>복잡도 +20%</td><td>+180</td><td>요구 항목 201–400</td></tr>
+              <tr><td><b>합계</b></td><td><b>1,080</b></td><td>부가세 별도</td></tr>
+            </tbody>
+          </table>
+          <p class="hint">※ 패키지 정가 상한(1,000)은 패키지 가격에만 적용되며, 옵션·가산은 별도입니다.</p>
+        </section>
+
+        <section class="foot">© 2025 For internal review. 이 문서는 내부 검토 및 고객 제안 초안 작성을 위한 자료입니다.</section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // 개선: 전역 스코프 오염을 막기 위해 DOMContentLoaded 이벤트 리스너로 전체 코드를 래핑합니다.
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // ===== 데이터 및 상수 정의 =====
+      const PRICES = {
+        civil: {
+          A: { 'std-y1': 590, 'std-h2': 750, 'std-q4': 800, 'ent-y1': 700, 'ent-h2': 900, 'ent-q4': 990 },
+          B: { 'std-y1': 540, 'std-h2': 700, 'std-q4': 760, 'ent-y1': 660, 'ent-h2': 860, 'ent-q4': 960 },
+          C: { 'std-y1': 500, 'std-h2': 650, 'std-q4': 720, 'ent-y1': 620, 'ent-h2': 820, 'ent-q4': 940 }
+        },
+        public: {
+          A: { 'std-y1': 600, 'std-h2': 750, 'std-q4': 800, 'ent-y1': 700, 'ent-h2': 900, 'ent-q4': 1000 },
+          B: { 'std-y1': 550, 'std-h2': 700, 'std-q4': 750, 'ent-y1': 650, 'ent-h2': 850, 'ent-q4': 950 },
+          C: { 'std-y1': 500, 'std-h2': 650, 'std-q4': 700, 'ent-y1': 600, 'ent-h2': 800, 'ent-q4': 950 }
+        }
+      };
+
+      const ROWS = [
+        { key:'std-y1', name:'스탠다드', cycle:'연 1회', md:'5 m/d' },
+        { key:'std-h2', name:'스탠다드', cycle:'반기 2회', md:'8 m/d' },
+        { key:'std-q4', name:'스탠다드', cycle:'분기 4회', md:'14 m/d' },
+        { key:'ent-y1', name:'엔터프라이즈', cycle:'연 1회', md:'5 m/d' },
+        { key:'ent-h2', name:'엔터프라이즈', cycle:'반기 2회', md:'8 m/d' },
+        { key:'ent-q4', name:'엔터프라이즈', cycle:'분기 4회', md:'14 m/d' }
+      ];
+
+      // ===== DOM 요소 캐싱 =====
+      const tocLinks = document.querySelectorAll('.toc a');
+      const sections = document.querySelectorAll('main section');
+      const listTableBody = document.querySelector('#tbl-list tbody');
+      const matrixTableBody = document.getElementById('matrix-body');
+      
+      // 가격 정책 버튼
+      const civilBtn = document.getElementById('btn-civil');
+      const publicBtn = document.getElementById('btn-public');
+      const planABtn = document.getElementById('btn-plan-a');
+      const planBBtn = document.getElementById('btn-plan-b');
+      const planCBtn = document.getElementById('btn-plan-c');
+
+      // ===== 상태 관리 =====
+      let state = {
+        market: 'civil', // 'civil' or 'public'
+        plan: 'A'      // 'A' | 'B' | 'C'
+      };
+
+      // ===== TOC active state: IntersectionObserver 사용으로 성능 개선 =====
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            tocLinks.forEach(link => {
+              link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+            });
+          }
+        });
+      }, { rootMargin: '-20% 0px -80% 0px' }); // 화면 상단 20% 지점에서 활성화되도록 조정
+
+      sections.forEach(section => observer.observe(section));
+
+      // ===== 가격표 렌더링 함수 =====
+      function renderPriceTable() {
+        if (!listTableBody) return;
+        const currentPrices = PRICES[state.market][state.plan];
+        for (const [key, val] of Object.entries(currentPrices)) {
+          const cell = listTableBody.querySelector(`[data-row="${key}"] .price`);
+          if (cell) cell.textContent = val;
+        }
+        updateActiveButtons();
+      }
+
+      function updateActiveButtons() {
+        civilBtn.classList.toggle('active', state.market === 'civil');
+        publicBtn.classList.toggle('active', state.market === 'public');
+        planABtn.classList.toggle('active', state.plan === 'A');
+        planBBtn.classList.toggle('active', state.plan === 'B');
+        planCBtn.classList.toggle('active', state.plan === 'C');
+      }
+
+      // ===== 인쇄용 행렬 테이블 렌더링 =====
+      function renderPrintMatrix() {
+        if (!matrixTableBody) return;
+        const td = (v) => `<td>${v}</td>`;
+        const rowsHtml = ROWS.map(r => {
+          const civA = PRICES.civil.A[r.key];
+          const civB = PRICES.civil.B[r.key];
+          const civC = PRICES.civil.C[r.key];
+          const pubA = PRICES.public.A[r.key];
+          const pubB = PRICES.public.B[r.key];
+          const pubC = PRICES.public.C[r.key];
+          return `<tr>
+            <td>${r.name}</td>
+            <td>${r.cycle}</td>
+            <td>${r.md}</td>
+            ${td(civA)}${td(civB)}${td(civC)}${td(pubA)}${td(pubB)}${td(pubC)}
+          </tr>`;
+        }).join('');
+        matrixTableBody.innerHTML = rowsHtml;
+      }
+      
+      // ===== 이벤트 핸들러 =====
+      function handlePriceModeChange(e) {
+        if (e.target.id === 'btn-civil') state.market = 'civil';
+        if (e.target.id === 'btn-public') state.market = 'public';
+        renderPriceTable();
+      }
+      
+      function handlePlanChange(e) {
+        if (e.target.id === 'btn-plan-a') state.plan = 'A';
+        if (e.target.id === 'btn-plan-b') state.plan = 'B';
+        if (e.target.id === 'btn-plan-c') state.plan = 'C';
+        renderPriceTable();
+      }
+
+      // ===== 이벤트 리스너 연결 =====
+      civilBtn.addEventListener('click', handlePriceModeChange);
+      publicBtn.addEventListener('click', handlePriceModeChange);
+      planABtn.addEventListener('click', handlePlanChange);
+      planBBtn.addEventListener('click', handlePlanChange);
+      planCBtn.addEventListener('click', handlePlanChange);
+      window.addEventListener('beforeprint', renderPrintMatrix);
+
+      // ===== 초기화 =====
+      renderPriceTable();
+      renderPrintMatrix();
+
+    }); // End of DOMContentLoaded
+
+    // ===== Print Helper (전역 스코프에 유지) =====
+    function exportPDF() {
+      try {
+        const mainHTML = document.querySelector('main').outerHTML;
+        const title = document.title || '이폼사인_보안컴플라이언스_가격정책';
+        // 개선: 하드코딩된 CSS 대신, ID로 관리되는 스타일 태그의 내용을 읽어옵니다.
+        const printCSS = document.getElementById('print-styles').innerHTML;
+        const w = window.open('', '_blank');
+
+        if (!w) {
+          console.warn("팝업이 차단되었습니다. 현재 페이지에서 인쇄를 시도합니다.");
+          window.print();
+          return;
+        }
+
+        w.document.open();
+        w.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>${title}</title><style>${printCSS}</style></head><body>${mainHTML}</body></html>`);
+        w.document.close();
+        w.focus();
+        setTimeout(() => {
+          try { w.print(); } catch (e) { console.error('인쇄 중 오류 발생:', e); }
+          try { w.close(); } catch (e) {}
+        }, 250); // 렌더링 시간을 조금 더 확보
+      } catch (e) {
+        console.error('PDF 내보내기 중 오류 발생:', e);
+        try { window.print(); } catch (e2) {}
+      }
+    }
+  </script>
+</body>
+</html>
+
